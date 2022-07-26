@@ -1,0 +1,9 @@
+{
+    "command": [
+        "${marksman_bin}",
+        "${server_path}",
+        "--stdio"
+    ],
+    "selector": "text.html.markdown",
+    "initializationOptions": {},
+}
