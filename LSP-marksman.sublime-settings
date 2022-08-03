@@ -1,8 +1,7 @@
 {
     "command": [
-        "${marksman_bin}",
-        "${server_path}",
-        "--stdio"
+        "${storage_path}/LSP-marksman/marksman",
+        "serve"
     ],
     "selector": "text.html.markdown",
     "initializationOptions": {},
