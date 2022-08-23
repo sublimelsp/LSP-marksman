@@ -1,7 +1,7 @@
 import sublime
 
 from LSP.plugin import AbstractPlugin, register_plugin, unregister_plugin
-from LSP.plugin.core.typing import cast, Any, List, Optional
+from LSP.plugin.core.typing import Any, Optional
 
 import os
 import shutil
