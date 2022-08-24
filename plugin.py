@@ -65,8 +65,8 @@ class Marksman(AbstractPlugin):
             'command', [os.path.join(cls.basedir(), 'bin', binary)]
         )
         marksman_ls_binary = command[0].replace('${storage_path}', cls.storage_path())
-        if sublime.platform() == 'windows' and not marksman_ls_binary.endswith('.bat'):
-            marksman_ls_binary = marksman_ls_binary + '.bat'
+        if sublime.platform() == 'windows' and not marksman_ls_binary.endswith('.exe'):
+            marksman_ls_binary = marksman_ls_binary + '.exe'
         return marksman_ls_binary
 
     @classmethod
