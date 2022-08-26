@@ -10,7 +10,7 @@ import urllib.request
 
 USER_AGENT = 'Sublime Text LSP'
 
-TAG = '2022-07-31'
+TAG = '2022-08-25'
 
 MARKSMAN_RELEASES_BASE = 'https://github.com/artempyanykh/marksman/releases/download/{tag}/{platform}'
 MARKSMAN_FILENAME = 'marksman'
