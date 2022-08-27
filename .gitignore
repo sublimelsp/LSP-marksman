@@ -7,3 +7,4 @@
 mypycov
 htmlcov
 __pycache__
+node_modules
