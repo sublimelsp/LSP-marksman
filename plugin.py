@@ -94,12 +94,13 @@ class Marksman(AbstractPlugin):
                 'User-Agent': USER_AGENT
             }
         )
-        marksman_ls = cls._get_marksman_ls_path()
+        marksman_ls = os.path.join(cls.basedir(), "bin", cls._get_marksman_ls_path())
         with urllib.request.urlopen(req) as fp:
-            with open(os.path.join(cls.basedir(), "bin", marksman_ls), "wb") as f:
+            os.makedirs(os.path.dirname(marksman_ls), exist_ok=True)
+            with open(marksman_ls, "wb") as f:
                 f.write(fp.read())
 
-        os.chmod(os.path.join(cls.basedir(), "bin", marksman_ls), 0o700)
+        os.chmod(marksman_ls, 0o700)
         with open(os.path.join(cls.basedir(), 'VERSION'), 'w') as fp:
                 fp.write(cls.server_version())
 
