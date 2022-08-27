@@ -1,92 +1,69 @@
-import sublime
-
-from LSP.plugin import AbstractPlugin, register_plugin, unregister_plugin
-from LSP.plugin.core.typing import Any, Optional
-
+from LSP.plugin import AbstractPlugin, ClientConfig, register_plugin, unregister_plugin, WorkspaceFolder
+from LSP.plugin.core.typing import Dict, Optional, List
+from shutil import which
 import os
-import shutil
+import sublime
 import urllib.request
 
 
+MARKSMAN_TAG = '2022-08-28'
+MARKSMAN_RELEASES_BASE = 'https://github.com/artempyanykh/marksman/releases/download/{tag}/{platform}'
 USER_AGENT = 'Sublime Text LSP'
 
-TAG = '2022-08-27'
 
-MARKSMAN_RELEASES_BASE = 'https://github.com/artempyanykh/marksman/releases/download/{tag}/{platform}'
-MARKSMAN_FILENAME = 'marksman'
-
-
-def plat() -> Optional[str]:
-    '''
-    Returns the user friendly platform version that
-    sublime is running on.
-    '''
-    if sublime.platform() == 'osx':
+def marksman_binary() -> Optional[str]:
+    platform_arch = '{}_{}'.format(sublime.platform(), sublime.arch())
+    if platform_arch in {'osx_x64', 'osx_arm64'}:
         return 'marksman-macos'
-    elif sublime.platform() == 'windows':
+    if platform_arch == 'windows_x64':
         return 'marksman.exe'
-    elif sublime.platform() == 'linux':
+    if platform_arch == 'linux_x64':
         return 'marksman-linux'
-    else:
-        return None
+    return None
 
 
 class Marksman(AbstractPlugin):
-    '''
-    Marksman is an AbstractPlugin implementation that provides
-    the required functions to act as a helper package for the
-    Markdown Language Server (marksman)
-    '''
-
     @classmethod
     def name(cls) -> str:
-        return "marksman"
+        return 'marksman'
 
     @classmethod
     def basedir(cls) -> str:
         return os.path.join(cls.storage_path(), __package__)
 
     @classmethod
+    def marksman_path(cls) -> str:
+        return os.path.join(cls.basedir(), 'bin', marksman_binary() or 'unsupported_platform')
+
+    @classmethod
+    def additional_variables(cls) -> Optional[Dict[str, str]]:
+        return {
+            'marksman_bin': marksman_binary() or 'unsupported_platform'
+        }
+
+    @classmethod
     def server_version(cls) -> str:
-        return TAG
+        return MARKSMAN_TAG
 
     @classmethod
     def current_server_version(cls) -> Optional[str]:
         try:
-            with open(os.path.join(cls.basedir(), "VERSION"), "r") as fp:
+            with open(os.path.join(cls.basedir(), 'VERSION'), 'r') as fp:
                 return fp.read()
-        except:
+        except Exception:
             return None
 
     @classmethod
-    def _get_marksman_ls_path(cls) -> str:
-        binary = 'marksman.exe' if sublime.platform() == 'windows' else 'marksman'
-        command = get_setting(
-            'command', [os.path.join(cls.basedir(), 'bin', binary)]
-        )
-        marksman_ls_binary = command[0].replace('${storage_path}', cls.storage_path())
-        if sublime.platform() == 'windows' and not marksman_ls_binary.endswith('.exe'):
-            marksman_ls_binary = marksman_ls_binary + '.exe'
-        return marksman_ls_binary
-
-    @classmethod
-    def _is_marksman_ls_installed(cls) -> bool:
-        return bool(cls._get_marksman_ls_path())
-
-    @classmethod
     def needs_update_or_installation(cls) -> bool:
-        return not cls._is_marksman_ls_installed() or (cls.current_server_version() != cls.server_version())
+        if marksman_binary() is None:
+            raise ValueError('Platform "{} ({})" is not supported'.format(sublime.platform(), sublime.arch()))
+        return which(cls.marksman_path()) is None or cls.current_server_version() != cls.server_version()
 
     @classmethod
     def install_or_update(cls) -> None:
-        if plat() is None:
-            raise ValueError('System platform not detected or supported')
-        
-        os.makedirs(cls.basedir(), exist_ok=True)
-        
-        bin_url = MARKSMAN_RELEASES_BASE.format(
-            tag=cls.server_version(), platform=plat())
-
+        marksman_path = cls.marksman_path()
+        os.makedirs(os.path.dirname(marksman_path), exist_ok=True)
+        bin_url = MARKSMAN_RELEASES_BASE.format(tag=cls.server_version(), platform=marksman_binary())
         req = urllib.request.Request(
             bin_url,
             data=None,
@@ -94,26 +71,18 @@ class Marksman(AbstractPlugin):
                 'User-Agent': USER_AGENT
             }
         )
-        marksman_ls = os.path.join(cls.basedir(), "bin", cls._get_marksman_ls_path())
         with urllib.request.urlopen(req) as fp:
-            os.makedirs(os.path.dirname(marksman_ls), exist_ok=True)
-            with open(marksman_ls, "wb") as f:
+            with open(marksman_path, 'wb') as f:
                 f.write(fp.read())
 
-        os.chmod(marksman_ls, 0o700)
+        os.chmod(marksman_path, 0o700)
         with open(os.path.join(cls.basedir(), 'VERSION'), 'w') as fp:
-                fp.write(cls.server_version())
+            fp.write(cls.server_version())
 
 
-def get_setting(key: str, default=None) -> Any:
-    settings = sublime.load_settings(
-        'LSP-marksman.sublime-settings').get("settings", {})
-    return settings.get(key, default)
-
-
-def plugin_loaded():
+def plugin_loaded() -> None:
     register_plugin(Marksman)
 
 
-def plugin_unloaded():
+def plugin_unloaded() -> None:
     unregister_plugin(Marksman)
