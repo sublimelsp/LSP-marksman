@@ -14,13 +14,13 @@ Currently, LSP-marksman is not on Package Control.
 
 1. Clone LSP-marksman to your `Packages` folder.
     1. Run `sublime.packages_path()` in Sublime Text console. It will show the path of your `Packages` folder.
-    1. Open a terminal in the `Packages` folder and then run `git clone git@github.com:bitsper2nd/LSP-marksman.git`
+    1. Open a terminal in the `Packages` folder and then run `git clone https://github.com/sublimelsp/LSP-marksman`
 1. Restart Sublime Text.
 
 OR
 
 1. Press Control + Shift + p in Sublime Text to open the command palette.
-1. Type Add Repository `https://github.com/bitsper2nd/LSP-marksman.git`
+1. Type Add Repository `https://github.com/sublimelsp/LSP-marksman.git`
 1. Open the command palette again and type install package. Type LSP-marksman and press Enter.
 
 ### Screenshots
@@ -51,5 +51,5 @@ There are some ways to configure the package and the language server.
 - From the command palette `Preferences: LSP-marksman Settings`
 
 ### Acknowledgments
-- Thank you [Artem Pyanykh](https://github.com/artempyanykh) for making this language server
+- Thank you [Artem Pyanykh](https://github.com/artempyanykh) for making the `marksman` language server
 - Thank you [Terminal](https://github.com/TheSecEng) for helping me with this plugin
