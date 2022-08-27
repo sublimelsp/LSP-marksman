@@ -4,14 +4,17 @@ An LSP server for Markdown that provides completion, go to definition, find refe
 
 Provided through [Marksman](https://github.com/artempyanykh/marksman).
 
+### Requirements
+
+Install [LSP](https://packagecontrol.io/packages/LSP) via Package Control.
+
 ### Installation
 
 Currently, LSP-marksman is not on Package Control.
 
-1. Install [LSP](https://packagecontrol.io/packages/LSP) via Package Control.
 1. Clone LSP-marksman to your `Packages` folder.
     1. Run `sublime.packages_path()` in Sublime Text console. It will show the path of your `Packages` folder.
-    1. Open terminal in the `Packages` folder and then run `git clone git@github.com:bitsper2nd/LSP-marksman.git`
+    1. Open a terminal in the `Packages` folder and then run `git clone git@github.com:bitsper2nd/LSP-marksman.git`
 1. Restart Sublime Text.
 
 OR
@@ -47,6 +50,6 @@ There are some ways to configure the package and the language server.
 - From `Preferences > Package Settings > LSP > Servers > LSP-marksman`
 - From the command palette `Preferences: LSP-marksman Settings`
 
-### Acknowledgements
+### Acknowledgments
 - Thank you [Artem Pyanykh](https://github.com/artempyanykh) for making this language server
 - Thank you [Terminal](https://github.com/TheSecEng) for helping me with this plugin
