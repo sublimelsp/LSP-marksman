@@ -1,5 +1,5 @@
-from LSP.plugin import AbstractPlugin, ClientConfig, register_plugin, unregister_plugin, WorkspaceFolder
-from LSP.plugin.core.typing import Dict, Optional, List
+from LSP.plugin import AbstractPlugin, register_plugin, unregister_plugin
+from LSP.plugin.core.typing import Dict, Optional
 from shutil import which
 import os
 import sublime
