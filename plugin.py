@@ -6,7 +6,7 @@ import sublime
 import urllib.request
 
 
-MARKSMAN_TAG = '2023-01-29'
+MARKSMAN_TAG = '2023-03-04'
 MARKSMAN_RELEASES_BASE = 'https://github.com/artempyanykh/marksman/releases/download/{tag}/{platform}'
 USER_AGENT = 'Sublime Text LSP'
 
