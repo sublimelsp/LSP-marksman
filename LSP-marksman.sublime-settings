@@ -1,4 +1,9 @@
 {
     "command": ["${storage_path}/LSP-marksman/bin/${marksman_bin}"],
     "selector": "text.html.markdown",
+    "initializationOptions": {
+        // How text is synced between this client and the server.
+        // 1=full, 2=incremental
+        "preferredTextSyncKind": 2,
+    },
 }
