@@ -17,8 +17,10 @@ def marksman_binary() -> Optional[str]:
         return 'marksman-macos'
     if platform_arch == 'windows_x64':
         return 'marksman.exe'
+    if platform_arch == 'linux_arm64':
+        return 'marksman-linux-arm64'
     if platform_arch == 'linux_x64':
-        return 'marksman-linux'
+        return 'marksman-linux-x64'
     return None
 
 
