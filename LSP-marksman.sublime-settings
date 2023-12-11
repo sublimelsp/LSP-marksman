@@ -6,4 +6,7 @@
         // 1=full, 2=incremental
         "preferredTextSyncKind": 2,
     },
+    "experimental_capabilities": {
+        "codeLensFindReferences": true,
+    }
 }

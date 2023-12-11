@@ -1,0 +1,67 @@
+{
+  "contributions": {
+    "settings": [
+      {
+        "file_patterns": [
+          "/LSP-marksman.sublime-settings"
+        ],
+        "schema": {
+          "$id": "sublime://settings/LSP-marksman",
+          "definitions": {
+            "PluginConfig": {
+              "properties": {
+                "initializationOptions": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "preferredTextSyncKind": {
+                      "enum": [
+                        1,
+                        2,
+                        null
+                      ],
+                      "markdownEnumDescriptions": [
+                        "full sync",
+                        "incremental sync",
+                        "default value (full sync)"
+                      ],
+                      "default": null,
+                      "description": "How text is synced between this client and the server."
+                    },
+                  },
+                },
+              }
+            }
+          },
+          "allOf": [
+            {
+              "$ref": "sublime://settings/LSP-plugin-base"
+            },
+            {
+              "$ref": "sublime://settings/LSP-marksman#/definitions/PluginConfig"
+            }
+          ]
+        }
+      },
+      {
+        "file_patterns": [
+          "/*.sublime-project"
+        ],
+        "schema": {
+          "properties": {
+            "settings": {
+              "properties": {
+                "LSP": {
+                  "properties": {
+                    "LSP-marksman": {
+                      "$ref": "sublime://settings/LSP-marksman#/definitions/PluginConfig"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+    ]
+  }
+}

@@ -1,2 +1,3 @@
 pyrightconfig.json export-ignore
-screenshots export-ignore
+pyproject.toml export-ignore
+tox.ini export-ignore
