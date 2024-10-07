@@ -1,0 +1,56 @@
+name: Check/update to latest version
+
+on:
+  schedule:
+    # Ru every day at 7:15
+    - cron: 15 7 * * *
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Check latest version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.SUBLIMELSP_APP_ID }}
+          private-key: ${{ secrets.SUBLIMELSP_APP_PRIVATE_KEY }}
+
+      - name: Get latest release of the server
+        uses: pozetroninc/github-action-get-latest-release@v0.8.0
+        id: latest_release
+        with:
+          excludes: 'prerelease,draft'
+          repository: 'artempyanykh/marksman'
+          token: ${{ steps.app-token.outputs.token }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Get current TAG from main
+        id: current_release
+        run: |
+          release=$(rg -o 'MARKSMAN_TAG = '([^']+)' -r \$1 "plugin.py")
+          echo "release=$release" >> "$GITHUB_OUTPUT"
+
+      - if: steps.current_release.outputs.release != steps.latest_release.outputs.release
+        name: Update current version
+        run: sed -i 's/${{ steps.current_release.outputs.release }}/${{ steps.latest_release.outputs.release }}/' plugin.py
+
+      - if: steps.current_release.outputs.release != steps.latest_release.outputs.release
+        name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: update marksman to ${{ steps.latest_release.outputs.release }}
+          delete-branch: true
+          title: update marksman to ${{ steps.latest_release.outputs.release }}
+          body: 'Update marksman from [${{ steps.current_release.outputs.release }}](https://github.com/artempyanykh/marksman/releases/tag/${{ steps.current_release.outputs.release }}) to [${{ steps.latest_release.outputs.release }}](https://github.com/artempyanykh/marksman/releases/tag/${{ steps.latest_release.outputs.release }}) (see [all changes](https://github.com/artempyanykh/marksman/compare/${{ steps.current_release.outputs.release }}...${{ steps.latest_release.outputs.release }})).'
+          token: ${{ steps.app-token.outputs.token }}
