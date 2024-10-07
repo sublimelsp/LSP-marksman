@@ -38,7 +38,7 @@ jobs:
       - name: Get current TAG from main
         id: current_release
         run: |
-          release=$(rg -o 'MARKSMAN_TAG = '([^']+)' -r \$1 "plugin.py")
+          release=$(rg -o "MARKSMAN_TAG = '([^']+)'" -r \$1 "plugin.py")
           echo "release=$release" >> "$GITHUB_OUTPUT"
 
       - if: steps.current_release.outputs.release != steps.latest_release.outputs.release
