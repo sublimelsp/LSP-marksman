@@ -1,3 +1,4 @@
 pyrightconfig.json export-ignore
 pyproject.toml export-ignore
+renovate.json export-ignore
 tox.ini export-ignore
