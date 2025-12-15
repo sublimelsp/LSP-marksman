@@ -8,7 +8,7 @@ import sublime
 import urllib.request
 
 
-MARKSMAN_TAG = '2025-11-30'
+MARKSMAN_TAG = '2025-12-13'
 MARKSMAN_RELEASES_BASE = 'https://github.com/artempyanykh/marksman/releases/download/{tag}/{platform}'
 USER_AGENT = 'Sublime Text LSP'
 
