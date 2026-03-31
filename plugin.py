@@ -1,12 +1,20 @@
-from LSP.plugin import AbstractPlugin, register_plugin, unregister_plugin
+from __future__ import annotations
+
+from LSP.plugin import AbstractPlugin
+from LSP.plugin import register_plugin
+from LSP.plugin import unregister_plugin
 from LSP.plugin.core.protocol import Location
-from LSP.plugin.core.typing import Any, Callable, Dict, Optional, List, Mapping
+from LSP.plugin.core.typing import Any
+from LSP.plugin.core.typing import Callable
+from LSP.plugin.core.typing import Dict
+from LSP.plugin.core.typing import List
+from LSP.plugin.core.typing import Mapping
+from LSP.plugin.core.typing import Optional
 from LSP.plugin.locationpicker import LocationPicker
 from shutil import which
 import os
 import sublime
 import urllib.request
-
 
 MARKSMAN_TAG = '2026-02-08'
 MARKSMAN_RELEASES_BASE = 'https://github.com/artempyanykh/marksman/releases/download/{tag}/{platform}'
