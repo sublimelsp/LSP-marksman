@@ -1,12 +1,14 @@
+[tool.pyright]
+pythonVersion = "3.8"
+
 [tool.ruff]
-select = ["E", "F", "W"]
 line-length = 120
 target-version = 'py38'
 
 [tool.ruff.lint]
 # Enable preview rules.
 preview = true
-select = ["F401", "I"]
+select = ["E", "F", "I", "W"]
 
 [tool.ruff.lint.isort]
 case-sensitive = false
@@ -22,7 +24,3 @@ module = [
     "sublime"
 ]
 ignore_missing_imports = true
-
-[tool.pyright]
-pythonVersion = "3.8"
-
