@@ -4,14 +4,12 @@ from LSP.plugin import AbstractPlugin
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
 from LSP.plugin.core.protocol import Location
-from LSP.plugin.core.typing import Any
-from LSP.plugin.core.typing import Callable
-from LSP.plugin.core.typing import Dict
-from LSP.plugin.core.typing import List
-from LSP.plugin.core.typing import Mapping
-from LSP.plugin.core.typing import Optional
 from LSP.plugin.locationpicker import LocationPicker
 from shutil import which
+from typing import Any
+from typing import Callable
+from typing import Mapping
+from typing_extensions import override
 import os
 import sublime
 import urllib.request
@@ -21,7 +19,7 @@ MARKSMAN_RELEASES_BASE = 'https://github.com/artempyanykh/marksman/releases/down
 USER_AGENT = 'Sublime Text LSP'
 
 
-def marksman_binary() -> Optional[str]:
+def marksman_binary() -> str | None:
     platform_arch = '{}_{}'.format(sublime.platform(), sublime.arch())
     if platform_arch in {'osx_x64', 'osx_arm64'}:
         return 'marksman-macos'
@@ -36,19 +34,21 @@ def marksman_binary() -> Optional[str]:
 
 class Marksman(AbstractPlugin):
     @classmethod
+    @override
     def name(cls) -> str:
         return 'marksman'
 
     @classmethod
     def basedir(cls) -> str:
-        return os.path.join(cls.storage_path(), __package__)
+        return os.path.join(cls.storage_path(), str(__package__))
 
     @classmethod
     def marksman_path(cls) -> str:
         return os.path.join(cls.basedir(), 'bin', marksman_binary() or 'unsupported_platform')
 
     @classmethod
-    def additional_variables(cls) -> Optional[Dict[str, str]]:
+    @override
+    def additional_variables(cls) -> dict[str, str] | None:
         return {
             'marksman_bin': marksman_binary() or 'unsupported_platform'
         }
@@ -58,7 +58,7 @@ class Marksman(AbstractPlugin):
         return MARKSMAN_TAG
 
     @classmethod
-    def current_server_version(cls) -> Optional[str]:
+    def current_server_version(cls) -> str | None:
         try:
             with open(os.path.join(cls.basedir(), 'VERSION'), 'r') as fp:
                 return fp.read()
@@ -66,12 +66,14 @@ class Marksman(AbstractPlugin):
             return None
 
     @classmethod
+    @override
     def needs_update_or_installation(cls) -> bool:
         if marksman_binary() is None:
             raise ValueError('Platform "{} ({})" is not supported'.format(sublime.platform(), sublime.arch()))
         return which(cls.marksman_path()) is None or cls.current_server_version() != cls.server_version()
 
     @classmethod
+    @override
     def install_or_update(cls) -> None:
         marksman_path = cls.marksman_path()
         os.makedirs(os.path.dirname(marksman_path), exist_ok=True)
@@ -91,6 +93,7 @@ class Marksman(AbstractPlugin):
         with open(os.path.join(cls.basedir(), 'VERSION'), 'w') as fp:
             fp.write(cls.server_version())
 
+    @override
     def on_pre_server_command(self, command: Mapping[str, Any], done_callback: Callable[[], None]) -> bool:
         command_name = command['command']
         if command_name == 'marksman.findReferences':
@@ -101,7 +104,7 @@ class Marksman(AbstractPlugin):
             return True
         return False
 
-    def _handle_show_references(self, references: List[Location]) -> None:
+    def _handle_show_references(self, references: list[Location]) -> None:
         session = self.weaksession()
         if not session:
             return
