@@ -1,5 +1,6 @@
 [tool.pyright]
 pythonVersion = "3.8"
+typeCheckingMode = "standard"
 
 [tool.ruff]
 line-length = 120
@@ -24,3 +25,17 @@ module = [
     "sublime"
 ]
 ignore_missing_imports = true
+
+[tool.tox]
+env_list = ["py3"]
+skipsdist = true
+
+[tool.tox.env_run_base]
+deps = [
+    # "basedpyright==1.39.0",
+    "ruff==0.15.10",
+]
+commands = [
+    # ["basedpyright", "plugin.py"],
+    ["ruff", "check"],
+]
