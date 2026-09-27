@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from LSP.plugin import AbstractPlugin
+from LSP.plugin import LocationPicker
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
-from LSP.plugin.core.protocol import Location
-from LSP.plugin.locationpicker import LocationPicker
+from LSP.protocol import Location
 from shutil import which
 from typing import Any
 from typing import Callable
