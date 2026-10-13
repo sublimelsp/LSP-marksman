@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/sublimelsp/lsp_smoke_test/v1/smoke.schema.json
+file: index.md
+# The session name until the package is migrated to LspPlugin.
+server: marksman
+# The wiki link points to a document that doesn't exist.
+expected_diagnostics:
+  message: non-existent
