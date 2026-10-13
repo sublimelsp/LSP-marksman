@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-from LSP.plugin import AbstractPlugin
+from LSP.plugin import command_handler
 from LSP.plugin import LocationPicker
-from LSP.plugin import register_plugin
-from LSP.plugin import unregister_plugin
+from LSP.plugin import LspPlugin
+from LSP.plugin import OnPreStartContext
+from LSP.plugin import Promise
 from LSP.protocol import Location
+from LSP.protocol import LSPAny
 from shutil import which
-from typing import Any
-from typing import Callable
-from typing import Mapping
 from typing_extensions import override
 import os
 import sublime
@@ -32,26 +31,21 @@ def marksman_binary() -> str | None:
     return None
 
 
-class Marksman(AbstractPlugin):
+class Marksman(LspPlugin):
     @classmethod
     @override
-    def name(cls) -> str:
-        return 'marksman'
+    def on_pre_start_async(cls, context: OnPreStartContext) -> None:
+        if cls.needs_update_or_installation():
+            cls.install_or_update()
+        context.variables['marksman_bin'] = marksman_binary() or 'unsupported_platform'
 
     @classmethod
     def basedir(cls) -> str:
-        return os.path.join(cls.storage_path(), str(__package__))
+        return str(cls.plugin_storage_path)
 
     @classmethod
     def marksman_path(cls) -> str:
         return os.path.join(cls.basedir(), 'bin', marksman_binary() or 'unsupported_platform')
-
-    @classmethod
-    @override
-    def additional_variables(cls) -> dict[str, str] | None:
-        return {
-            'marksman_bin': marksman_binary() or 'unsupported_platform'
-        }
 
     @classmethod
     def server_version(cls) -> str:
@@ -66,14 +60,12 @@ class Marksman(AbstractPlugin):
             return None
 
     @classmethod
-    @override
     def needs_update_or_installation(cls) -> bool:
         if marksman_binary() is None:
             raise ValueError('Platform "{} ({})" is not supported'.format(sublime.platform(), sublime.arch()))
         return which(cls.marksman_path()) is None or cls.current_server_version() != cls.server_version()
 
     @classmethod
-    @override
     def install_or_update(cls) -> None:
         marksman_path = cls.marksman_path()
         os.makedirs(os.path.dirname(marksman_path), exist_ok=True)
@@ -93,16 +85,11 @@ class Marksman(AbstractPlugin):
         with open(os.path.join(cls.basedir(), 'VERSION'), 'w') as fp:
             fp.write(cls.server_version())
 
-    @override
-    def on_pre_server_command(self, command: Mapping[str, Any], done_callback: Callable[[], None]) -> bool:
-        command_name = command['command']
-        if command_name == 'marksman.findReferences':
-            command_arguments = command['arguments']
-            if command_arguments and 'locations' in command_arguments[0]:
-                self._handle_show_references(command_arguments[0]['locations'])
-            done_callback()
-            return True
-        return False
+    @command_handler('marksman.findReferences')
+    def on_find_references(self, arguments: list[LSPAny] | None) -> Promise[None]:
+        if arguments and isinstance(argument := arguments[0], dict) and 'locations' in argument:
+            self._handle_show_references(argument['locations'])
+        return Promise.resolve(None)
 
     def _handle_show_references(self, references: list[Location]) -> None:
         session = self.weaksession()
@@ -126,8 +113,8 @@ class Marksman(AbstractPlugin):
 
 
 def plugin_loaded() -> None:
-    register_plugin(Marksman)
+    Marksman.register()
 
 
 def plugin_unloaded() -> None:
-    unregister_plugin(Marksman)
+    Marksman.unregister()
