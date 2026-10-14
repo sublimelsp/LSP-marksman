@@ -40,12 +40,12 @@ class Marksman(LspPlugin):
         context.variables['marksman_bin'] = marksman_binary() or 'unsupported_platform'
 
     @classmethod
-    def basedir(cls) -> str:
+    def storage_path(cls) -> str:
         return str(cls.plugin_storage_path)
 
     @classmethod
     def marksman_path(cls) -> str:
-        return os.path.join(cls.basedir(), 'bin', marksman_binary() or 'unsupported_platform')
+        return os.path.join(cls.storage_path(), 'bin', marksman_binary() or 'unsupported_platform')
 
     @classmethod
     def server_version(cls) -> str:
@@ -54,7 +54,7 @@ class Marksman(LspPlugin):
     @classmethod
     def current_server_version(cls) -> str | None:
         try:
-            with open(os.path.join(cls.basedir(), 'VERSION'), 'r') as fp:
+            with open(os.path.join(cls.storage_path(), 'VERSION'), 'r') as fp:
                 return fp.read()
         except Exception:
             return None
@@ -82,7 +82,7 @@ class Marksman(LspPlugin):
                 f.write(fp.read())
 
         os.chmod(marksman_path, 0o700)
-        with open(os.path.join(cls.basedir(), 'VERSION'), 'w') as fp:
+        with open(os.path.join(cls.storage_path(), 'VERSION'), 'w') as fp:
             fp.write(cls.server_version())
 
     @command_handler('marksman.findReferences')
