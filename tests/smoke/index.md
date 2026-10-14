@@ -1,0 +1,3 @@
+# Index
+
+See [[missing-page]].
